@@ -1,13 +1,22 @@
-import React from 'react';
+import React from "react";
+import {
+  ChakraProvider,
+  Container,
+  FormControl,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react"
+import SearchDir from "./SearchDir";
 
 const App = () => {
   return(
-    <>
-      <h1>I am App Component</h1>
-      <button onClick={() => {
-        electron.notificationApi.sendNotification('My custom')
-      }}>notify</button>
-    </>
+    <ChakraProvider>
+      <Container>
+        <SearchDir/>
+      </Container>
+    </ChakraProvider>
   )
 }
 
