@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Input,
-  FormControl,
-} from "@chakra-ui/react"
-
+import { Button, Input, FormControl } from "@chakra-ui/react";
 
 const DirSerchForm = ({ label, path, onSearch, onChangePath }) => {
   return (

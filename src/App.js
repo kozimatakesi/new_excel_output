@@ -2,22 +2,17 @@ import React from "react";
 import {
   ChakraProvider,
   Container,
-  FormControl,
-  FormLabel,
-  Input,
-  FormErrorMessage,
-  FormHelperText,
-} from "@chakra-ui/react"
+} from "@chakra-ui/react";
 import SearchDir from "./SearchDir";
 
 const App = () => {
-  return(
+  return (
     <ChakraProvider>
       <Container>
-        <SearchDir/>
+        <SearchDir />
       </Container>
     </ChakraProvider>
-  )
-}
+  );
+};
 
 export default App;

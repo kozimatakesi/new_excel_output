@@ -1,7 +1,6 @@
 import { Button, Input } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 
-
 const SearchDir = () => {
   const [dirPath, setDirPath] = useState("");
 
@@ -23,7 +22,9 @@ const SearchDir = () => {
         onClick={() => {
           api.filesApi.searchDirPath();
         }}
-      >フォルダ検索</Button>
+      >
+        フォルダ検索
+      </Button>
       <Input
         value={dirPath}
         onChange={(event) => {
@@ -34,7 +35,9 @@ const SearchDir = () => {
         onClick={() => {
           api.filesApi.createExcelFile(dirPath);
         }}
-      >Excel出力</Button>
+      >
+        Excel出力
+      </Button>
     </div>
   );
 };

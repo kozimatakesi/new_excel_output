@@ -1,7 +1,13 @@
-const { BrowserWindow, app, ipcMain, Notification, dialog } = require('electron');
-const path = require('path');
-const fs = require('fs').promises;
-const xlsx = require('xlsx');
+const {
+  BrowserWindow,
+  app,
+  ipcMain,
+  Notification,
+  dialog,
+} = require("electron");
+const path = require("path");
+const fs = require("fs").promises;
+const xlsx = require("xlsx");
 
 const xutil = xlsx.utils;
 
@@ -16,35 +22,33 @@ function createWindow() {
       nodeIntegration: false,
       worldSafeExecuteJavaScript: true,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
+      preload: path.join(__dirname, "preload.js"),
+    },
+  });
 
-  win.loadFile('index.html');
+  win.loadFile("src/index.html");
 }
 
 if (isDev) {
-  require('electron-reload')(__dirname, {
-    electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
-  })
+  require("electron-reload")(__dirname, {
+    electron: path.join(__dirname, "node_modules", ".bin", "electron"),
+  });
 }
 
-ipcMain.on('notify', (_, message) => {
-  new Notification({title: 'Notifiation', body: message}).show();
-})
+ipcMain.on("notify", (_, message) => {
+  new Notification({ title: "Notifiation", body: message }).show();
+});
 
-ipcMain.on("searchDirPath", async(event) => {
+ipcMain.on("searchDirPath", async (event) => {
   const dirInfo = await dialog.showOpenDialog({
     properties: ["openDirectory"],
     title: "title",
   });
   const dirPath = dirInfo.filePaths[0];
-  event.reply("dirPath", dirPath)
-})
-
+  event.reply("dirPath", dirPath);
+});
 
 ipcMain.on("createExcelFile", (_, dirPath) => {
-
   const checkDir = (array) => {
     const newArray = [];
     for (const i of array) {
@@ -60,7 +64,9 @@ ipcMain.on("createExcelFile", (_, dirPath) => {
   // 対象ディレクトリ内の全てのファイルを取得する関数
   const getAllFiles = async (directoryPath) => {
     const dirName = path.basename(directoryPath);
-    const innerDirFiles = await fs.readdir(directoryPath, { withFileTypes: true });
+    const innerDirFiles = await fs.readdir(directoryPath, {
+      withFileTypes: true,
+    });
     for (const file of innerDirFiles) {
       if (file.isFile()) {
         const stats = await fs.stat(`${directoryPath}/${file.name}`);
@@ -84,13 +90,22 @@ ipcMain.on("createExcelFile", (_, dirPath) => {
     }
   };
 
-  const forExcel = [['フォルダ名', 'ファイル名', 'ファイルサイズ', '更新日', '開始時間', '更新時間']];
+  const forExcel = [
+    [
+      "フォルダ名",
+      "ファイル名",
+      "ファイルサイズ",
+      "更新日",
+      "開始時間",
+      "更新時間",
+    ],
+  ];
   (async () => {
     await getAllFiles(dirPath);
     for (const file of AllFiles) {
-      if (file.name != '.DS_Store') {
+      if (file.name != ".DS_Store") {
         const checkTime = file.name.match(/_\d{6}/);
-        let startTime = '';
+        let startTime = "";
         if (checkTime) {
           const time = checkTime[0].slice(1);
           const hour = time.slice(0, 2);
@@ -98,7 +113,14 @@ ipcMain.on("createExcelFile", (_, dirPath) => {
           const sec = time.slice(4);
           startTime = `${hour}:${min}:${sec}`;
         }
-        forExcel.push([file.dir, file.name, `${file.size}byte`, file.date, startTime, file.time]);
+        forExcel.push([
+          file.dir,
+          file.name,
+          `${file.size}byte`,
+          file.date,
+          startTime,
+          file.time,
+        ]);
       }
     }
     console.log(forExcel);
@@ -107,10 +129,11 @@ ipcMain.on("createExcelFile", (_, dirPath) => {
     const wsName = path.basename(dirPath);
     xutil.book_append_sheet(wb, ws, wsName);
     xlsx.writeFile(wb, `${dirPath}/${path.basename(dirPath)}.xls`);
-    new Notification({title: '完了', body: 'EXCELファイルを作成しました'}).show();
+    new Notification({
+      title: "完了",
+      body: "EXCELファイルを作成しました",
+    }).show();
   })();
-})
+});
 
-
-
-app.whenReady().then(createWindow)
+app.whenReady().then(createWindow);

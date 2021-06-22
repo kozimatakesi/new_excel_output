@@ -2,13 +2,41 @@
   "name": "excel_output",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "src/main.js",
   "private": true,
   "scripts": {
-    "start": "electron .",
+    "start": "electron-forge start",
     "watch": "webpack --config webpack.common.js --watch",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "build": {
+    "appId": "com.electron.yourapp",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "build",
+      "src",
+      "package.json",
+      "package-lock.json"
+    ],
+    "mac": {
+      "icon": "assets/mac/icon_mac.icns",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "icon": "assets/win/icon_win.ico",
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   },
   "keywords": [],
   "author": "",
@@ -17,7 +45,7 @@
     "@chakra-ui/react": "^1.6.4",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
-    "electron": "^13.1.2",
+    "electron-squirrel-startup": "^1.0.0",
     "framer-motion": "^4.1.17",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -27,8 +55,15 @@
     "@babel/core": "^7.14.6",
     "@babel/preset-env": "^7.14.5",
     "@babel/preset-react": "^7.14.5",
+    "@electron-forge/cli": "^6.0.0-beta.57",
+    "@electron-forge/maker-deb": "^6.0.0-beta.57",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.57",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.57",
+    "@electron-forge/maker-zip": "^6.0.0-beta.57",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.2.6",
+    "electron": "^13.1.2",
+    "electron-builder": "^22.11.7",
     "electron-reload": "^1.5.0",
     "eslint": "^7.29.0",
     "eslint-config-airbnb": "^18.2.1",
@@ -42,5 +77,32 @@
     "style-loader": "^2.0.0",
     "webpack": "^5.39.1",
     "webpack-cli": "^4.7.2"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "excel_output"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }

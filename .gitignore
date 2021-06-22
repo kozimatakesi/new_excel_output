@@ -4,6 +4,7 @@
 /.pnp
 .pnp.js
 /server
+/dist
 
 
 # testing

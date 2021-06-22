@@ -1,9 +1,9 @@
-const {ipcRenderer, contextBridge} = require('electron');
+const { ipcRenderer, contextBridge } = require("electron");
 
-contextBridge.exposeInMainWorld('api', {
+contextBridge.exposeInMainWorld("api", {
   notificationApi: {
     sendNotification(message) {
-      ipcRenderer.send('notify', message);
+      ipcRenderer.send("notify", message);
     },
   },
 
@@ -12,11 +12,11 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.send("searchDirPath");
     },
     createExcelFile(dirPath) {
-      ipcRenderer.send("createExcelFile", dirPath)
-    }
+      ipcRenderer.send("createExcelFile", dirPath);
+    },
   },
 
   on: (channel, callback) => {
     ipcRenderer.on(channel, (event, arg) => callback(event, arg));
-  }
-})
+  },
+});
