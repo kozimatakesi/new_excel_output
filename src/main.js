@@ -8,6 +8,7 @@ const {
 const path = require("path");
 const fs = require("fs").promises;
 const xlsx = require("xlsx");
+const execSync = require('child_process').execSync;
 
 const xutil = xlsx.utils;
 
@@ -48,16 +49,13 @@ ipcMain.on("searchDirPath", async (event) => {
   event.reply("dirPath", dirPath);
 });
 
+
+ipcMain.on("openFile", () => {
+  const excelFile = "/Users/kawamoto/Desktop/20210612_SB関東/20210612_SB関東.xls"
+  const stdout = execSync(excelFile);
+});
+
 ipcMain.on("createExcelFile", (_, dirPath) => {
-  const checkDir = (array) => {
-    const newArray = [];
-    for (const i of array) {
-      if (i.isDirectory()) {
-        newArray.push(i);
-      }
-    }
-    return newArray;
-  };
 
   const AllFiles = [];
 
@@ -71,6 +69,7 @@ ipcMain.on("createExcelFile", (_, dirPath) => {
       if (file.isFile()) {
         const stats = await fs.stat(`${directoryPath}/${file.name}`);
         AllFiles.push({
+          path: directoryPath,
           dir: dirName,
           name: file.name,
           size: stats.size,
@@ -79,7 +78,7 @@ ipcMain.on("createExcelFile", (_, dirPath) => {
         });
       }
     }
-    const dirOnly = checkDir(innerDirFiles);
+    const dirOnly = innerDirFiles.filter((file) => file.isDirectory());
     // 対象ディレクトリ内にディレクトリがなかった時は終了
     if (dirOnly.length === 0) {
       return;
@@ -100,23 +99,30 @@ ipcMain.on("createExcelFile", (_, dirPath) => {
       "更新時間",
     ],
   ];
+  let fileDir = dirPath;
   (async () => {
     await getAllFiles(dirPath);
     for (const file of AllFiles) {
       if (file.name != ".DS_Store") {
-        const checkTime = file.name.match(/_\d{6}/);
+        const checkTime = file.name.match(/_\d{6}\D/);
         let startTime = "";
         if (checkTime) {
-          const time = checkTime[0].slice(1);
+          const time = checkTime[0].slice(1).slice(0, -1);
           const hour = time.slice(0, 2);
           const min = time.slice(2, 4);
           const sec = time.slice(4);
           startTime = `${hour}:${min}:${sec}`;
         }
+        if(fileDir !== file.dir) {
+          forExcel.push([],[file.path]);
+        }
+
+        fileDir = file.dir;
+
         forExcel.push([
           file.dir,
           file.name,
-          `${file.size}byte`,
+          `${(file.size / 1000000).toFixed(2)}Mbyte`,
           file.date,
           startTime,
           file.time,

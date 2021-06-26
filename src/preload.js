@@ -6,6 +6,9 @@ contextBridge.exposeInMainWorld("api", {
       ipcRenderer.send("notify", message);
     },
   },
+  dragApi: (event) => {
+    ipcRenderer.send('ondragstart', event);
+  },
 
   filesApi: {
     searchDirPath() {
@@ -14,6 +17,9 @@ contextBridge.exposeInMainWorld("api", {
     createExcelFile(dirPath) {
       ipcRenderer.send("createExcelFile", dirPath);
     },
+    openFile() {
+      ipcRenderer.send("openFile");
+    }
   },
 
   on: (channel, callback) => {
